@@ -1,8 +1,5 @@
-import faker
 import mysql.connector as mysql
 import MatchDetails
-
-fake = faker.Faker()
 
 creds = []
 with open('creds') as file:

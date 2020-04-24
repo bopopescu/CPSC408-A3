@@ -8,4 +8,4 @@ class MatchDetails:
         self.Date = Date
 
     def __str__(self):
-        return "MatchID: " + str(self.MatchID) + "\nMap: " + self.Map + "\nWin: " + str(self.Win) + "\nRoundsWon: " + str(self.RoundsWon) + "\nRoundsLost: " + str(self.RoundsLost) + "\nDate: " + str(self.Date)
+        return "MatchID: " + str(self.MatchID) + "\nMap: " + str(self.Map) + "\nWin: " + str(self.Win) + "\nRoundsWon: " + str(self.RoundsWon) + "\nRoundsLost: " + str(self.RoundsLost) + "\nDate: " + str(self.Date)
