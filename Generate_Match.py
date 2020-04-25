@@ -1,50 +1,52 @@
+# Matthew Parnham
+
 import faker
 import mysql.connector as mysql
 import MatchDetails
 import random
-import time
 import sys
 
+# cmd args check
 if len(sys.argv) != 2:
-    print("Incorrect Usage.\nTry: python Generate_Match.py <output file name>")
+    print("Incorrect Usage.\nTry: python Generate_Match.py <output file name (csv)>")
     exit()
 
+#instantiate faker
 fake = faker.Faker()
 
-
+# Open credentials file and store credentials as variables
 creds = []
 with open('creds') as file:
     data = file.read()
     creds = data.split('\n')
 
+# Connect to DB
 db = mysql.connect(
     host = creds[0],
     user = creds[1],
-    passwd = creds[2]
+    passwd = creds[2],
+    database = 'Assignment3'
 )
 
 cursor = db.cursor()
-cursor.execute("USE Assignment3")
+
+# Function to get IDs from a table that contains a column of IDs and the names that match. e.g. Maps(MapID, MapName)
+# We need a list of the IDs so that our fake data uses valid IDs
+def getIDs(query):
+    cursor.execute(query)
+    output = cursor.fetchall()
+    for i in range(len(output)):
+        output[i] = int(output[i][0])
+    return output
 
 # get maps
-cursor.execute("SELECT MapID FROM Maps")
-maps = cursor.fetchall()
-for i in range(len(maps)):
-    maps[i] = int(maps[i][0])
-
+maps = getIDs("SELECT MapID FROM Maps")
 
 # get characters
-cursor.execute("SELECT HeroID FROM Heroes")
-heroes = cursor.fetchall()
-for i in range(len(heroes)):
-    heroes[i] = int(heroes[i][0])
-
+heroes = getIDs("SELECT HeroID FROM Heroes")
 
 # get weapons
-cursor.execute("SELECT WeaponID FROM Weapons")
-weapons = cursor.fetchall()
-for i in range(len(weapons)):
-    weapons[i] = int(weapons[i][0])
+weapons = getIDs("SELECT WeaponID FROM Weapons")
 
 
 # Create Match Details
@@ -52,6 +54,7 @@ fakeMap = maps[random.randint(0,len(maps)-1)]
 fakeWin = bool(random.randint(0,1))
 fakeRoundsWon = 0
 fakeRoundsLost = 0
+# One team must reach 13 to win and with 25 total rounds, the losing team will have between 0 and 12 rounds
 if fakeWin:
     fakeRoundsWon = 13
     fakeRoundsLost = random.randint(0,12)
@@ -62,19 +65,23 @@ fakeDate = fake.date()
 
 matchDetails = MatchDetails.MatchDetails(2,fakeMap,fakeWin,fakeRoundsWon,fakeRoundsLost,fakeDate)
 
-
+# Generate Fake scoreboard entries
 scoreboard = []
 for i in range(10):
     scoreboard.append([fake.user_name(),heroes[random.randint(0,len(heroes)-1)],random.randint(100,340),random.randint(0,30),random.randint(0,25),random.randint(0,10),random.randint(30,100),random.randint(0,10),random.randint(0,5),random.randint(0,5)])
 
+# Generate fake performance entries
 performance = []
 for i in range(5):
     performance.append([scoreboard[i*2][0],random.randint(0,8),random.randint(0,8),random.randint(0,3)])
 
+# Generate fake timeline entries
 timeline = []
 for i in range(fakeRoundsWon + fakeRoundsLost):
     timeline.append([i+1,random.randint(0,500),random.randint(0,5),random.randint(0,2),random.randint(0,1),random.randint(0,43)*100,weapons[random.randint(0,len(weapons)-1)],random.randint(0,1)])
 
+# Write Match data to csv. This will all be uniform length except timeline which could vary from 13-25 entries per match.
+#   For this reason, it is last so that all the other line numbers can be static.
 o = open(sys.argv[1],'w')
 
 o.write('Match Details\n')
