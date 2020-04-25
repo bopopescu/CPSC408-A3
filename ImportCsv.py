@@ -1,6 +1,4 @@
 import mysql.connector as mysql
-import MatchDetails
-import time
 import sys
 import csv
 
