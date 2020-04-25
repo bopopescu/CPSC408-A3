@@ -89,7 +89,7 @@ CREATE TABLE Weapons (
 CREATE TABLE Maps (
     MapID INT PRIMARY KEY AUTO_INCREMENT,
     Name VARCHAR(16)
-)
+);
 
 INSERT INTO Maps(Name)
 VALUES('Bind');
