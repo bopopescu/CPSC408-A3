@@ -6,9 +6,9 @@ and analyze my personal Valorant statistics, and this step allows me to test dat
 with minimal input effort.
 ### Usage
 ```
-> python Generate_Match.py <export csv name>
+> python Generate_Match.py <export csv name> <# records to create>
 ```
-This will generate a csv containing fake, formatted match data for a Valorant match.
+This will generate a csv containing fake, formatted match data for Valorant matches (however many you specify).
 ```
 > python ImportCsv.py <csv name>
 ```
